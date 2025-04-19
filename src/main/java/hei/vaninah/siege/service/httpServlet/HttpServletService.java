@@ -1,7 +1,5 @@
 package hei.vaninah.siege.service.httpServlet;
 
-import hei.vaninah.siege.entity.BestSale;
-import hei.vaninah.siege.entity.ProcessingTime;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -14,10 +12,11 @@ import java.util.Map;
 @Service
 public class HttpServletService {
     private final RestTemplate restTemplate = new RestTemplate();
+    public static final String API_KEY_PREFIX = "apiKey";
 
-    public <T> T[] doGet(String url, Map<String, String> headers, Class<T[]> responseType) {
+    public <T> T[] doGetList(String url, Map<String, String> headers, Class<T[]> responseType) {
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Authorization", "ApiKey " + headers.get("apiKey"));
+        httpHeaders.set("Authorization", headers.get(API_KEY_PREFIX));
         HttpEntity<Void> entity = new HttpEntity<>(httpHeaders);
 
         ResponseEntity<T[]> response = restTemplate.exchange(
@@ -28,13 +27,5 @@ public class HttpServletService {
         );
 
         return response.getBody();
-    }
-
-    public BestSale[] doGetBestSale(String url, Map<String, String> headers) {
-        return doGet(url, headers, BestSale[].class);
-    }
-
-    public ProcessingTime[] doGetProcessingTime(String url, Map<String, String> headers) {
-        return doGet(url, headers, ProcessingTime[].class);
     }
 }

@@ -19,16 +19,12 @@ public class SiegeController {
     }
 
     @GetMapping("/bestSales")
-    public ResponseEntity<List<BestSale>> getBestSales(@RequestParam Integer top) {
+    public List<BestSale> getBestSales(@RequestParam Integer top) {
         return siegeService.getBestSales(top);
     }
 
     @GetMapping("/dishes/{id}/processingTime")
-    public ResponseEntity <Object> getProcessingTimes(
-            @PathVariable("id") String id
-//            @RequestParam(required = false, defaultValue = "AVERAGE") ProcessingValueType valueType,
-//            @RequestParam(required = false, defaultValue = "SECONDS") ProcessingTimeType timeType
-    ) {
+    public ResponseEntity <Object> getProcessingTimes(@PathVariable("id") String id) {
         return null;
     }
 }

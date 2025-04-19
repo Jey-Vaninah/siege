@@ -19,7 +19,7 @@ public class BestSaleRepository {
             rs.getString("dish_name"),
             rs.getString("id_dish"),
             rs.getString("id_sale_point"),
-            rs.getInt("quantity_sold"),
+            rs.getInt("quantity"),
             rs.getDouble("total_amount"),
             rs.getTimestamp("created_at").toLocalDateTime()
         );
@@ -27,7 +27,7 @@ public class BestSaleRepository {
 
     public void save(BestSale bestSale) throws SQLException {
         String query = """
-            insert into "best_sale" ("id", "dish_name","id_dish", "id_sale_point", "quantity_sold", "total_amount", "created_at")
+            insert into "best_sale" ("id", "dish_name","id_dish", "id_sale_point", "quantity", "total_amount", "created_at")
             values (?, ?, ?, ?, ?, ?, ?);
         """;
 

@@ -1,36 +1,61 @@
 package hei.vaninah.siege.service;
 
 import hei.vaninah.siege.entity.ProcessingTime;
+import hei.vaninah.siege.entity.SalePoint;
 import hei.vaninah.siege.repository.ProcessingTimeRepository;
+import hei.vaninah.siege.repository.SalePointRepository;
 import hei.vaninah.siege.service.httpServlet.HttpServletService;
+import hei.vaninah.siege.service.modele.ProcessingTimeApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+
+import static hei.vaninah.siege.service.httpServlet.HttpServletService.API_KEY_PREFIX;
+import static java.util.UUID.randomUUID;
 
 @Service
 @RequiredArgsConstructor
 public class ProcessingTimeService {
+    private static final String PROCESSING_TIME_URL_PREFIX = "/sales";
     private final HttpServletService httpServletService;
     private final ProcessingTimeRepository processingTimeRepository;
+    private final SalePointRepository salePointRepository;
 
-    private static final String RESTAURANT_SERVER_URL = System.getenv("RESTAURANT_SERVER_URL");
-    private static final String RESTAURANT_SERVER_API_KEY = System.getenv("RESTAURANT_SERVER_API_KEY");
+    public void synchroniseProcessingTimes() throws SQLException {
+        List<SalePoint> salePoints = salePointRepository.getAll();
+        List<ProcessingTime> processingTimes = new ArrayList<>();
 
-    public void synchroniseProcessingTime() {
-        ProcessingTime[] processingTimes = httpServletService.doGetProcessingTime(
-            RESTAURANT_SERVER_URL + "/processingTimes",
-            Map.of("apiKey", RESTAURANT_SERVER_API_KEY)
-        );
+        for (SalePoint salePoint : salePoints) {
+            ProcessingTimeApiResponse[] processingTimeApiResponses = httpServletService.doGetList(
+                    salePoint.getApiUrl() + PROCESSING_TIME_URL_PREFIX,
+                    Map.of(API_KEY_PREFIX, salePoint.getApiKey()),
+                    ProcessingTimeApiResponse[].class
+            );
 
-        if (processingTimes != null && processingTimes.length > 0) {
-            try {
-                processingTimeRepository.saveAll(Arrays.asList(processingTimes));
-            } catch (SQLException e) {
-                throw new RuntimeException("Error saving processing time", e);
-            }
+            List<ProcessingTime> newProcessingTimes = Arrays
+                    .stream(processingTimeApiResponses)
+                    .map(processingTimeApiResponse -> new ProcessingTime(
+                        randomUUID().toString(),
+                        processingTimeApiResponse.getDishName(),
+                        processingTimeApiResponse.getDurationUnit(),
+                        processingTimeApiResponse.getPreparationDuration(),
+                        LocalDateTime.now(),
+                        salePoint.getId()
+                    ))
+                    .toList();
+            processingTimes.addAll(newProcessingTimes);
         }
+
+        this.processingTimeRepository.saveAll(processingTimes);
+    }
+
+    public List<ProcessingTime> getProcessingTimes(Integer top) throws SQLException {
+        return this.processingTimeRepository.getAll(top);
     }
 }
