@@ -19,6 +19,7 @@ public class BestSaleRepository {
     private BestSale resultSetToBestSale(ResultSet rs) throws SQLException {
         return new BestSale(
                 rs.getString("dish_name"),
+                rs.getString("id_dish"),
                 rs.getInt("quantity_sold"),
                 rs.getDouble("total_amount")
         );
@@ -26,14 +27,15 @@ public class BestSaleRepository {
 
     public BestSale save(BestSale bestSale) throws SQLException {
         String query = """
-            INSERT INTO "best_sale" ("dish_name", "quantity_sold", "total_amount")
+            INSERT INTO "best_sale" ("dish_name","id_dish", "quantity_sold", "total_amount")
             VALUES (?, ?, ?);
         """;
 
         try (PreparedStatement ps = connection.prepareStatement(query)) {
             ps.setString(1, bestSale.getDishName());
-            ps.setInt(2, bestSale.getQuantitySold());
-            ps.setDouble(3, bestSale.getTotalAmount());
+            ps.setString(2, bestSale.getIdDish());
+            ps.setInt(3, bestSale.getQuantitySold());
+            ps.setDouble(4, bestSale.getTotalAmount());
             ps.executeUpdate();
         }
 

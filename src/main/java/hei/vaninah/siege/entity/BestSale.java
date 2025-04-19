@@ -11,6 +11,7 @@ import lombok.ToString;
 @NoArgsConstructor
 public class BestSale {
     private String dishName;
+    private String idDish;
     private int quantitySold;
     private double totalAmount;
 }

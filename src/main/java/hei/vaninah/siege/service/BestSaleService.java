@@ -24,7 +24,7 @@ public class BestSaleService {
         LocalDateTime now = LocalDateTime.now();
 
         BestSale[] bestSales = httpServletService.doGetBestSale(
-                RESTAURANT_SERVER_URL + "/bestSales",
+                RESTAURANT_SERVER_URL + "/sales",
                 Map.of("apiKey", RESTAURANT_SERVER_API_KEY)
         );
 
