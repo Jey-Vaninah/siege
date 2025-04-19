@@ -17,5 +17,5 @@ public class ProcessingTime {
     private DurationUnit durationUnit;
     private Double preparationDuration;
     private LocalDateTime createdAt;
-    private String idSalePoint;
+    private SalePoint salePoint;
 }

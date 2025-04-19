@@ -13,6 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProcessingTimeRepository {
     private final Connection connection;
+    private final SalePointRepository salePointRepository;
 
     private ProcessingTime resultSetToProcessingTime(ResultSet rs) throws SQLException {
         return new ProcessingTime(
@@ -21,7 +22,7 @@ public class ProcessingTimeRepository {
             DurationUnit.valueOf(rs.getString("duration")),
             rs.getDouble("preparation_duration"),
             rs.getTimestamp("created_at").toLocalDateTime(),
-            rs.getString("id_sale_point")
+            salePointRepository.findById(rs.getString("id_sale_point"))
         );
     }
 
@@ -37,7 +38,7 @@ public class ProcessingTimeRepository {
         ps.setObject(3, processingTime.getDurationUnit(), Types.OTHER);
         ps.setDouble(4, processingTime.getPreparationDuration());
         ps.setTimestamp(5, Timestamp.valueOf(processingTime.getCreatedAt()));
-        ps.setString(6, processingTime.getIdSalePoint());
+        ps.setString(6, processingTime.getSalePoint().getId());
         ps.executeUpdate();
     }
 

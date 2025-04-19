@@ -1,13 +1,12 @@
 package hei.vaninah.siege.service;
 
-import hei.vaninah.siege.entity.BestSale;
 import hei.vaninah.siege.entity.SynchroLog;
+import hei.vaninah.siege.service.modele.BestDishSaleApiReponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static java.util.UUID.randomUUID;
 
@@ -31,7 +30,7 @@ public class SiegeService {
         }
     }
 
-    public List<BestSale> getBestSales(Integer top) {
+    public BestDishSaleApiReponse getBestSales(Integer top) {
         try {
             return bestSaleService.getBestSales(top);
         } catch (SQLException e) {

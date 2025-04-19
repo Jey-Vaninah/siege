@@ -45,7 +45,7 @@ public class ProcessingTimeService {
                         processingTimeApiResponse.getDurationUnit(),
                         processingTimeApiResponse.getPreparationDuration(),
                         LocalDateTime.now(),
-                        salePoint.getId()
+                        salePoint
                     ))
                     .toList();
 					System.out.println(newProcessingTimes);
@@ -55,6 +55,6 @@ public class ProcessingTimeService {
     }
 
     public List<ProcessingTime> getProcessingTimes(Integer top) throws SQLException {
-        return this.processingTimeRepository.getAll(top);
+        return null;
     }
 }
