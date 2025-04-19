@@ -7,14 +7,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-//@Configuration
+@Configuration
 public class DatabaseConnection {
     private Connection connection;
     private final String DB_USERNAME = System.getenv("DB_USERNAME");
     private final String DB_PASSWORD = System.getenv("DB_PASSWORD");
     private final String DB_URL = System.getenv("DB_URL");
 
-//    @Bean
+    @Bean
     public Connection getConnection() {
         if (connection != null) {
             return connection;

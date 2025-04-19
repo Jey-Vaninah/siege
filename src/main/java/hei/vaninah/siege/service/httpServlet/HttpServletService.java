@@ -1,6 +1,7 @@
 package hei.vaninah.siege.service.httpServlet;
 
 import hei.vaninah.siege.entity.BestSale;
+import hei.vaninah.siege.entity.ProcessingTime;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -28,5 +29,29 @@ public class HttpServletService {
         );
 
         return response.getBody();
+    }
+
+    public <T> T[] doGet(String url, Map<String, String> headers, Class<T[]> responseType) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("Authorization", "ApiKey " + headers.get("apiKey"));
+        HttpEntity<Void> entity = new HttpEntity<>(httpHeaders);
+
+        System.out.printf("Siege REST API URL: %s\n", url);
+        ResponseEntity<T[]> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                responseType
+        );
+
+        return response.getBody();
+    }
+
+    public BestSale[] doGetBestSale(String url, Map<String, String> headers) {
+        return doGet(url, headers, BestSale[].class);
+    }
+
+    public ProcessingTime[] doGetProcessingTime(String url, Map<String, String> headers) {
+        return doGet(url, headers, ProcessingTime[].class);
     }
 }
