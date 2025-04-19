@@ -12,7 +12,7 @@ public class DatabaseConnection {
     private Connection connection;
     private final String DB_USERNAME = System.getenv("DB_USERNAME");
     private final String DB_PASSWORD = System.getenv("DB_PASSWORD");
-    private final String DB_URL = System.getenv("DB_URL");
+    private final String DB_URL = System.getenv("DB_URL"); // exemple : "jdbc:postgresql://localhost:5432/siege"
 
     @Bean
     public Connection getConnection() {

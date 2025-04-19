@@ -38,7 +38,6 @@ public class ProcessingTimeService {
                     Map.of(API_KEY_PREFIX, salePoint.getApiKey()),
                     ProcessingTimeApiResponse[].class
             );
-
             List<ProcessingTime> newProcessingTimes = Arrays
                     .stream(processingTimeApiResponses)
                     .map(processingTimeApiResponse -> new ProcessingTime(
@@ -50,9 +49,9 @@ public class ProcessingTimeService {
                         salePoint
                     ))
                     .toList();
+					System.out.println(newProcessingTimes);
             processingTimes.addAll(newProcessingTimes);
         }
-
         this.processingTimeRepository.saveAll(processingTimes);
     }
 
