@@ -22,7 +22,7 @@ import static java.util.UUID.randomUUID;
 @Service
 @RequiredArgsConstructor
 public class ProcessingTimeService {
-    private static final String PROCESSING_TIME_URL_PREFIX = "/sales";
+    private static final String PROCESSING_TIME_URL_PREFIX = "/processingTime";
     private final HttpServletService httpServletService;
     private final ProcessingTimeRepository processingTimeRepository;
     private final SalePointRepository salePointRepository;
@@ -56,6 +56,6 @@ public class ProcessingTimeService {
     }
 
     public List<ProcessingTime> getProcessingTimes(Integer top) throws SQLException {
-        return this.processingTimeRepository.getAll(top);
+        return null;
     }
 }
