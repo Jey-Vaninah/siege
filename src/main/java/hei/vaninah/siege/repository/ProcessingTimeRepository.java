@@ -1,7 +1,7 @@
 package hei.vaninah.siege.repository;
 
 import hei.vaninah.siege.entity.ProcessingTime;
-import hei.vaninah.siege.entity.Duration;
+import hei.vaninah.siege.entity.DurationUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -16,49 +16,49 @@ public class ProcessingTimeRepository {
 
     private ProcessingTime resultSetToProcessingTime(ResultSet rs) throws SQLException {
         return new ProcessingTime(
-                rs.getString("id"),
-                rs.getString("dish_name"),
-                rs.getDouble("preparation_duration"),
-                Duration.valueOf(rs.getString("duration"))
+            rs.getString("id"),
+            rs.getString("dish_name"),
+            DurationUnit.valueOf(rs.getString("duration")),
+            rs.getDouble("preparation_duration"),
+            rs.getTimestamp("created_at").toLocalDateTime(),
+            rs.getString("id_sale_point")
         );
     }
 
-    public ProcessingTime save(ProcessingTime processingTime) throws SQLException {
+    public void save(ProcessingTime processingTime) throws SQLException {
         String query = """
-            INSERT INTO "processing_time" ("id", "dish_name", "preparation_duration", "duration")
-            VALUES (?, ?, ?, ?);
+            insert into "processing_time"("id", "dish_name", "duration_unit", "preparation_duration", "created_at", "id_sale_point")
+            values (?, ?, ?, ?, ?, ?);
         """;
 
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setString(1, processingTime.getId());
-            ps.setString(2, processingTime.getDishName());
-            ps.setDouble(3, processingTime.getPreparationDuration());
-            ps.setString(4, processingTime.getDuration().name());
-            ps.executeUpdate();
-        }
-
-        return processingTime;
+        PreparedStatement ps = connection.prepareStatement(query);
+        ps.setString(1, processingTime.getId());
+        ps.setString(2, processingTime.getDishName());
+        ps.setObject(3, processingTime.getDurationUnit(), Types.OTHER);
+        ps.setDouble(4, processingTime.getPreparationDuration());
+        ps.setTimestamp(5, Timestamp.valueOf(processingTime.getCreatedAt()));
+        ps.setString(6, processingTime.getIdSalePoint());
+        ps.executeUpdate();
     }
 
-    public List<ProcessingTime> saveAll(List<ProcessingTime> processingTimes) throws SQLException {
+    public void saveAll(List<ProcessingTime> processingTimes) throws SQLException {
         for (ProcessingTime pt : processingTimes) {
             save(pt);
         }
-        return processingTimes;
     }
 
-    public List<ProcessingTime> getAll() throws SQLException {
+    public List<ProcessingTime> getAll(Integer top) throws SQLException {
         String query = """
-            SELECT * FROM "processing_time";
+            select * from "processing_time" order by created_at desc limit ?;
         """;
 
         List<ProcessingTime> processingTimes = new ArrayList<>();
-        try (PreparedStatement ps = connection.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
+        PreparedStatement ps = connection.prepareStatement(query);
+        ps.setInt(1, top);
+        ResultSet rs = ps.executeQuery();
 
-            while (rs.next()) {
-                processingTimes.add(resultSetToProcessingTime(rs));
-            }
+        while (rs.next()) {
+            processingTimes.add(resultSetToProcessingTime(rs));
         }
 
         return processingTimes;

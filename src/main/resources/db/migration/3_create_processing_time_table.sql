@@ -13,5 +13,6 @@ create table if not exists  "processing_time"
     "dish_name" varchar not null,
     "preparation_duration" double precision not null,
     "duration_unit" "duration_type" not null,
-    "id_sale_point" varchar not null references "sale_point"("id")
+    "id_sale_point" varchar not null references "sale_point"("id") not null,
+    "created_at" timestamp default current_timestamp not null
 );

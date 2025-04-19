@@ -4,10 +4,7 @@ import hei.vaninah.siege.entity.BestSale;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,44 +15,47 @@ public class BestSaleRepository {
 
     private BestSale resultSetToBestSale(ResultSet rs) throws SQLException {
         return new BestSale(
-                rs.getString("dish_name"),
-                rs.getString("id_dish"),
-                rs.getInt("quantity_sold"),
-                rs.getDouble("total_amount")
+            rs.getString("id"),
+            rs.getString("dish_name"),
+            rs.getString("id_dish"),
+            rs.getString("id_sale_point"),
+            rs.getInt("quantity_sold"),
+            rs.getDouble("total_amount"),
+            rs.getTimestamp("created_at").toLocalDateTime()
         );
     }
 
-    public BestSale save(BestSale bestSale) throws SQLException {
+    public void save(BestSale bestSale) throws SQLException {
         String query = """
-            INSERT INTO "best_sale" ("dish_name","id_dish", "quantity_sold", "total_amount")
-            VALUES (?, ?, ?);
+            insert into "best_sale" ("id", "dish_name","id_dish", "id_sale_point", "quantity_sold", "total_amount", "created_at")
+            values (?, ?, ?, ?, ?, ?, ?);
         """;
 
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setString(1, bestSale.getDishName());
-            ps.setString(2, bestSale.getIdDish());
-            ps.setInt(3, bestSale.getQuantitySold());
-            ps.setDouble(4, bestSale.getTotalAmount());
-            ps.executeUpdate();
-        }
-
-        return bestSale;
+        PreparedStatement ps = connection.prepareStatement(query);
+        ps.setString(1, bestSale.getId());
+        ps.setString(2, bestSale.getDishName());
+        ps.setString(3, bestSale.getIdDish());
+        ps.setString(4, bestSale.getIdSalePoint());
+        ps.setInt(5, bestSale.getQuantity());
+        ps.setDouble(6, bestSale.getTotalAmount());
+        ps.setTimestamp(7, Timestamp.valueOf(bestSale.getCreatedAt()));
+        ps.executeUpdate();
     }
 
-    public List<BestSale> saveAll(List<BestSale> bestSales) throws SQLException {
+    public void saveAll(List<BestSale> bestSales) throws SQLException {
         for (BestSale bestSale : bestSales) {
             save(bestSale);
         }
-        return bestSales;
     }
 
-    public List<BestSale> getAll() throws SQLException {
+    public List<BestSale> getAll(Integer top) throws SQLException {
         String query = """
-            SELECT * FROM "best_sale";
+            select * from "best_sale" order by "created_at" desc limit ?;
         """;
         PreparedStatement ps = connection.prepareStatement(query);
-        ResultSet rs = ps.executeQuery();
+        ps.setInt(1, top);
 
+        ResultSet rs = ps.executeQuery();
         List<BestSale> bestSales = new ArrayList<>();
         while (rs.next()) {
             bestSales.add(resultSetToBestSale(rs));

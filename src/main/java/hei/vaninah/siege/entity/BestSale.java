@@ -3,15 +3,18 @@ package hei.vaninah.siege.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-@ToString
+import java.time.LocalDateTime;
+
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class BestSale {
+    private String id;
     private String dishName;
     private String idDish;
-    private int quantitySold;
-    private double totalAmount;
+    private String idSalePoint;
+    private Integer quantity;
+    private Double totalAmount;
+    private LocalDateTime createdAt;
 }

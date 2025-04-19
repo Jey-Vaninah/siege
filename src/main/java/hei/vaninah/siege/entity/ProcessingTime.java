@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @ToString
 @Data
 @AllArgsConstructor
@@ -12,6 +14,8 @@ import lombok.ToString;
 public class ProcessingTime {
     private String id;
     private String dishName;
-    private double preparationDuration;
-    private Duration duration;
+    private DurationUnit durationUnit;
+    private Double preparationDuration;
+    private LocalDateTime createdAt;
+    private String idSalePoint;
 }

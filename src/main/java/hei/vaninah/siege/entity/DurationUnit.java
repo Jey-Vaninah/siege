@@ -1,6 +1,6 @@
 package hei.vaninah.siege.entity;
 
-public enum Duration {
+public enum DurationUnit {
     SECONDS,
     MINUTES,
     HOURS,
