@@ -48,14 +48,13 @@ public class ProcessingTimeRepository {
         }
     }
 
-    public List<ProcessingTime> getAll(Integer top) throws SQLException {
+    public List<ProcessingTime> getAll() throws SQLException {
         String query = """
-            select * from "processing_time" order by created_at desc limit ?;
+            select * from "processing_time" order by created_at desc;
         """;
 
         List<ProcessingTime> processingTimes = new ArrayList<>();
         PreparedStatement ps = connection.prepareStatement(query);
-        ps.setInt(1, top);
         ResultSet rs = ps.executeQuery();
 
         while (rs.next()) {

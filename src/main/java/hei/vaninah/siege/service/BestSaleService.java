@@ -52,63 +52,37 @@ public class BestSaleService {
             bestSales.addAll(newBestSales);
         }
 
-        this.bestSaleRepository.saveAll(bestSales);
+        bestSaleRepository.saveAll(bestSales);
     }
 
 
 
-
     public BestDishSaleApiReponse getBestSales(Integer top) throws SQLException {
-        List<BestSale> allSales = this.bestSaleRepository.getAll(top);
+        List<BestSale> allSales = bestSaleRepository.getAll();
 
-        Map<String, Map<String, List<BestSale>>> groupedSales = new HashMap<>();
-        for (BestSale sale : allSales) {
-            String salePointId = sale.getSalePoint().getId();
-            String dishName = sale.getDishName();
-            groupedSales
-                    .computeIfAbsent(salePointId, k -> new HashMap<>())
-                    .computeIfAbsent(dishName, k -> new ArrayList<>())
-                    .add(sale);
-        }
-
-        List<SaleApiReponse> responseList = new ArrayList<>();
-        for (var entry : groupedSales.entrySet()) {
-            String salePointId = entry.getKey();
-            SalePoint salePoint = salePointRepository.findById(salePointId);
-
-            String bestDish = null;
-            int maxQuantity = 0;
-            double totalAmount = 0;
-
-            for (var dishEntry : entry.getValue().entrySet()) {
-                int quantity = dishEntry.getValue().stream().mapToInt(BestSale::getQuantity).sum();
-                double amount = dishEntry.getValue().stream().mapToDouble(BestSale::getTotalAmount).sum();
-                if (quantity > maxQuantity) {
-                    bestDish = dishEntry.getKey();
-                    maxQuantity = quantity;
-                    totalAmount = amount;
-                }
-            }
-
-            if (bestDish != null) {
-                SaleApiReponse sale = new SaleApiReponse();
-                sale.setSalePoint(salePoint.getName());
-                sale.setDishName(bestDish);
-                sale.setQuantitySold(maxQuantity);
-                sale.setTotalAmount(totalAmount);
-                responseList.add(sale);
+        Map<String, BestSale> bestSaleByDishAndSalePoint = new HashMap<>();
+        for (BestSale bestSale : allSales) {
+            String key = bestSale.getSalePoint().getId() + "_" + bestSale.getIdDish();
+            if (!bestSaleByDishAndSalePoint.containsKey(key) || bestSale.getQuantity() > bestSaleByDishAndSalePoint.get(key).getQuantity()) {
+                bestSaleByDishAndSalePoint.put(key, bestSale);
             }
         }
 
-        List<SaleApiReponse> topSales = responseList.stream()
+        List<SaleApiReponse> allSalesRest = bestSaleByDishAndSalePoint.values().stream()
+                .map(bestSale -> new SaleApiReponse(
+                        bestSale.getSalePoint().getName(),
+                        bestSale.getDishName(),
+                        bestSale.getQuantity(),
+                        bestSale.getTotalAmount()
+                ))
+                .toList();
+
+		List<SaleApiReponse> topSales = allSalesRest.stream()
                 .sorted(Comparator.comparingInt(SaleApiReponse::getQuantitySold).reversed())
                 .limit(top)
                 .toList();
 
-        BestDishSaleApiReponse response = new BestDishSaleApiReponse();
-        response.setUpdatedAt(LocalDateTime.now());
-        response.setSales(topSales);
-        return response;
+        return new BestDishSaleApiReponse(LocalDateTime.now(), topSales);
     }
 
 }

@@ -49,13 +49,11 @@ public class BestSaleRepository {
         }
     }
 
-    public List<BestSale> getAll(Integer top) throws SQLException {
+    public List<BestSale> getAll() throws SQLException {
         String query = """
-            select * from "best_sale" order by "created_at" desc limit ?;
+            select * from "best_sale" order by "created_at" desc;
         """;
         PreparedStatement ps = connection.prepareStatement(query);
-        ps.setInt(1, top);
-
         ResultSet rs = ps.executeQuery();
         List<BestSale> bestSales = new ArrayList<>();
         while (rs.next()) {
@@ -65,28 +63,4 @@ public class BestSaleRepository {
         return bestSales;
     }
 
-    public BestSale getBestDish() throws SQLException {
-        String query = """
-        select "id_dish", "dish_name", sum("quantity") as total_quantity, sum("total_amount") as total_amount
-        from "best_sale"
-        group by "id_dish", "dish_name"
-        order by total_quantity desc;
-    """;
-
-        PreparedStatement ps = connection.prepareStatement(query);
-        ResultSet rs = ps.executeQuery();
-
-        if (rs.next()) {
-            return new BestSale(
-                    null,
-                    rs.getString("dish_name"),
-                    rs.getString("id_dish"),
-                    null,
-                    rs.getInt("total_quantity"),
-                    rs.getDouble("total_amount"),
-                    null
-            );
-        }
-        return null;
-    }
 }

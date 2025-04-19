@@ -56,7 +56,7 @@ public class ProcessingTimeService {
     }
 
     public BestProcessingTimeApiReponse getProcessingTimes(Integer top, CalculationModeType calculationModeType, DurationUnit durationUnit) throws SQLException {
-        List<ProcessingTime> all = processingTimeRepository.getAll(top);
+        List<ProcessingTime> all = processingTimeRepository.getAll();
 
         Map<String, Map<String, List<ProcessingTime>>> grouped = new HashMap<>();
         for (ProcessingTime pt : all) {
