@@ -1,7 +1,10 @@
 package hei.vaninah.siege.service;
 
+import hei.vaninah.siege.entity.CalculationModeType;
+import hei.vaninah.siege.entity.DurationUnit;
 import hei.vaninah.siege.entity.SynchroLog;
 import hei.vaninah.siege.service.modele.BestDishSaleApiReponse;
+import hei.vaninah.siege.service.modele.BestProcessingTimeApiReponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +36,13 @@ public class SiegeService {
     public BestDishSaleApiReponse getBestSales(Integer top) {
         try {
             return bestSaleService.getBestSales(top);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public BestProcessingTimeApiReponse getBestProcessingTime(Integer top, CalculationModeType calculationModeType, DurationUnit durationUnit) {
+        try {
+            return processingTimeService.getProcessingTimes(top, calculationModeType, durationUnit);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

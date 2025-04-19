@@ -19,7 +19,7 @@ public class ProcessingTimeRepository {
         return new ProcessingTime(
             rs.getString("id"),
             rs.getString("dish_name"),
-            DurationUnit.valueOf(rs.getString("duration")),
+            DurationUnit.valueOf(rs.getString("duration_unit")),
             rs.getDouble("preparation_duration"),
             rs.getTimestamp("created_at").toLocalDateTime(),
             salePointRepository.findById(rs.getString("id_sale_point"))
