@@ -21,7 +21,7 @@ public class SiegeService {
     public void synchronization() {
         try {
             bestSaleService.synchroniseBestSales();
-            //processingTimeService.synchroniseProcessingTimes();
+            processingTimeService.synchroniseProcessingTimes();
             synchroLogService.save(new SynchroLog(
                 randomUUID().toString(),
                 LocalDateTime.now()

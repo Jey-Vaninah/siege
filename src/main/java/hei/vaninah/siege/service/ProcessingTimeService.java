@@ -22,7 +22,7 @@ import static java.util.UUID.randomUUID;
 @Service
 @RequiredArgsConstructor
 public class ProcessingTimeService {
-    private static final String PROCESSING_TIME_URL_PREFIX = "/sales";
+    private static final String PROCESSING_TIME_URL_PREFIX = "/processingTime";
     private final HttpServletService httpServletService;
     private final ProcessingTimeRepository processingTimeRepository;
     private final SalePointRepository salePointRepository;
@@ -37,7 +37,6 @@ public class ProcessingTimeService {
                     Map.of(API_KEY_PREFIX, salePoint.getApiKey()),
                     ProcessingTimeApiResponse[].class
             );
-
             List<ProcessingTime> newProcessingTimes = Arrays
                     .stream(processingTimeApiResponses)
                     .map(processingTimeApiResponse -> new ProcessingTime(
@@ -49,9 +48,9 @@ public class ProcessingTimeService {
                         salePoint.getId()
                     ))
                     .toList();
+					System.out.println(newProcessingTimes);
             processingTimes.addAll(newProcessingTimes);
         }
-
         this.processingTimeRepository.saveAll(processingTimes);
     }
 
