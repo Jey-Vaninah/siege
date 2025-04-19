@@ -14,7 +14,7 @@ public class BestSale {
     private String id;
     private String dishName;
     private String idDish;
-    private String idSalePoint;
+    private SalePoint salePoint;
     private Integer quantity;
     private Double totalAmount;
     private LocalDateTime createdAt;

@@ -25,6 +25,22 @@ public class SalePointRepository {
         );
     }
 
+
+    public SalePoint findById(String id) throws SQLException {
+        String query = """
+        select * from "sale_point" where "id" = ?;
+    """;
+        PreparedStatement ps = connection.prepareStatement(query);
+        ps.setString(1, id);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            return resultSetToSalePoint(rs);
+        }
+        return null;
+    }
+
+
     public List<SalePoint> getAll() throws SQLException {
         List<SalePoint> salePoints = new ArrayList<>();
         String query = """

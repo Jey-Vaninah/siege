@@ -2,6 +2,7 @@ package hei.vaninah.siege.endpoint.controller;
 
 import hei.vaninah.siege.entity.BestSale;
 import hei.vaninah.siege.service.SiegeService;
+import hei.vaninah.siege.service.modele.BestDishSaleApiReponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class SiegeController {
     }
 
     @GetMapping("/bestSales")
-    public List<BestSale> getBestSales(@RequestParam Integer top) {
+    public BestDishSaleApiReponse getBestSales(@RequestParam Integer top) {
         return siegeService.getBestSales(top);
     }
 

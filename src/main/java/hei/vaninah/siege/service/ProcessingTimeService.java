@@ -46,7 +46,7 @@ public class ProcessingTimeService {
                         processingTimeApiResponse.getDurationUnit(),
                         processingTimeApiResponse.getPreparationDuration(),
                         LocalDateTime.now(),
-                        salePoint.getId()
+                        salePoint
                     ))
                     .toList();
             processingTimes.addAll(newProcessingTimes);

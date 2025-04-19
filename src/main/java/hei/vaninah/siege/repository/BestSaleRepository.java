@@ -12,13 +12,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BestSaleRepository {
     private final Connection connection;
+    private final SalePointRepository salePointRepository;
 
     private BestSale resultSetToBestSale(ResultSet rs) throws SQLException {
         return new BestSale(
             rs.getString("id"),
             rs.getString("dish_name"),
             rs.getString("id_dish"),
-            rs.getString("id_sale_point"),
+            salePointRepository.findById(rs.getString("id_sale_point")),
             rs.getInt("quantity"),
             rs.getDouble("total_amount"),
             rs.getTimestamp("created_at").toLocalDateTime()
@@ -35,7 +36,7 @@ public class BestSaleRepository {
         ps.setString(1, bestSale.getId());
         ps.setString(2, bestSale.getDishName());
         ps.setString(3, bestSale.getIdDish());
-        ps.setString(4, bestSale.getIdSalePoint());
+        ps.setString(4, bestSale.getSalePoint().getId());
         ps.setInt(5, bestSale.getQuantity());
         ps.setDouble(6, bestSale.getTotalAmount());
         ps.setTimestamp(7, Timestamp.valueOf(bestSale.getCreatedAt()));
@@ -62,5 +63,30 @@ public class BestSaleRepository {
         }
 
         return bestSales;
+    }
+
+    public BestSale getBestDish() throws SQLException {
+        String query = """
+        select "id_dish", "dish_name", sum("quantity") as total_quantity, sum("total_amount") as total_amount
+        from "best_sale"
+        group by "id_dish", "dish_name"
+        order by total_quantity desc;
+    """;
+
+        PreparedStatement ps = connection.prepareStatement(query);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            return new BestSale(
+                    null,
+                    rs.getString("dish_name"),
+                    rs.getString("id_dish"),
+                    null,
+                    rs.getInt("total_quantity"),
+                    rs.getDouble("total_amount"),
+                    null
+            );
+        }
+        return null;
     }
 }
